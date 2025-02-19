@@ -1,7 +1,22 @@
-FROM quay.io/souravkl11/rgnk-v2:latest
+# Use a stable Node.js base image
+FROM node:18-alpine 
 
-RUN git clone https://github.com/souravkl11/raganork-md /railway/Raganork
-WORKDIR /railway/Raganork
+# Set the working directory inside the container
+WORKDIR /app
+
+# Clone the repository (if private, add authentication)
+RUN apk add --no-cache git && \
+    git clone --depth=1 https://github.com/souravkl11/raganork-md.git . && \
+    rm -rf .git
+
+# Set timezone
 ENV TZ=Asia/Kolkata
-RUN yarn install --network-concurrency 1
+
+# Install dependencies
+RUN npm install --production
+
+# Expose port if required (adjust as needed)
+EXPOSE 3000 
+
+# Start the application
 CMD ["node", "index.js"]
